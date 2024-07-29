@@ -21,40 +21,61 @@ app.get("/", function (req, res) {
 app.get("/api/:date?", (req, res) => {
   const { date } = req.params;
 
+  const getCurrentDateResponse = () => {
+    const currentDate = new Date();
+
+    return res.json({
+      unix: currentDate.getTime(),
+      utc: currentDate.toUTCString(),
+    });
+  };
+
+  const getDateResponse = (date) => {
+    const parsedDateString = new Date(date);
+
+    if (!isNaN(parsedDateString)) {
+      return {
+        unix: parsedDateString.getTime(),
+        utc: parsedDateString.toUTCString(),
+      };
+    }
+
+    return null;
+  };
+
+  const getTimestampResponse = (timestamp) => {
+    // Convert param from string to number
+    const parsedTimeStamp = Number(timestamp);
+    if (!isNaN(parsedTimeStamp)) {
+      const date = new Date(parsedTimeStamp);
+
+      return {
+        unix: parsedTimeStamp,
+        utc: date / toUTCString(),
+      };
+    }
+
+    return null;
+  };
+
+  // Return current date if no date given
   if (!date) {
-    const utc = new Date().toUTCString();
-    const unix = Date.parse(utc);
-
-    return res.json({
-      unix,
-      utc,
-    });
+    getCurrentDateResponse();
   }
 
-  const parsedDate = new Date(date);
-
-  // Check if date string is correct
-  if (!isNaN(parsedDate)) {
-    const utc = new Date(parsedDate).toUTCString();
-    const unix = Date.parse(parsedDate);
-
-    return res.json({
-      unix,
-      utc,
-    });
+  // Return {unix, utc} if given correct date string
+  const dateResponse = getDateResponse(date);
+  if (dateResponse) {
+    return res.json(dateResponse);
   }
 
-  // Check if timestamp is correct
-  if (!isNaN(Number(date))) {
-    const utc = new Date(Number(date)).toUTCString();
-    const unix = Number(date);
-
-    return res.json({
-      unix,
-      utc,
-    });
+  // Return {unix, utc} if given correct date string
+  const timestampResponse = getTimestampResponse(date);
+  if (timestampResponse) {
+    return res.json(timestampResponse);
   }
 
+  // Return error if date is invalid
   return res.json({
     error: "Invalid Date",
   });
