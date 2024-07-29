@@ -18,13 +18,23 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/api/:date", (req, res) => {
+app.get("/api/:date?", (req, res) => {
   const { date } = req.params;
 
   const parsedDate = new Date(date);
 
   let utc;
   let unix;
+
+  if (!date) {
+    utc = new Date().toUTCString();
+    unix = Date.parse(utc);
+
+    return res.json({
+      unix,
+      utc,
+    });
+  }
 
   if (parsedDate !== "Invalid Date" && !isNaN(parsedDate)) {
     utc = new Date(parsedDate).toUTCString();
