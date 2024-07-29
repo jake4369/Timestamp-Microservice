@@ -4,6 +4,6 @@ const { getTimeObject } = require("./../controllers/dateController");
 // Express router
 const router = express.Router();
 
-router.route("/").get(getTimeObject);
+router.route("/:date?").get(getTimeObject);
 
 module.exports = router;

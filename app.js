@@ -5,6 +5,8 @@ const dateRouter = require("./routes/dateRoutes");
 
 app.use(cors({ optionsSuccessStatus: 200 }));
 
+app.use(express.json());
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 
@@ -14,6 +16,6 @@ app.get("/", function (req, res) {
 });
 
 // Date router middleware
-app.use("/api/:date?", dateRouter);
+app.use("/api", dateRouter);
 
 module.exports = app;
